@@ -21,7 +21,9 @@ async function accessSecret() {
 const app = express();
 app.use(express.json());
 // Serve the files in /assets at the URI /assets.
-app.use('/assets', express.static('assets'));
+// app.use('/assets', express.static('assets'));
+app.use('/assets', express.static('www/assets'));
+app.use('/images', express.static('www/images'));
 
 // The HTML content is produced by rendering a handlebars template.
 // The template values are stored in global state for reuse.
@@ -36,7 +38,7 @@ app.get('/', async (req, res) => {
   if (!template) {
     // Load Handlebars template from filesystem and compile for use.
     try {
-      template = handlebars.compile(readFileSync('index.html.hbs', 'utf8'));
+      template = handlebars.compile(readFileSync('www/index.html', 'utf8'));
     } catch (e) {
       console.error(e);
       res.status(500).send('Internal Server Error');

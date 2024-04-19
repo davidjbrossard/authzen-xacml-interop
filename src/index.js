@@ -56,9 +56,6 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/access/v1/evaluation', async (req, res) => {
-  let isError = false;
-  let authZenResponse = { decision: true };
-  let xacmlResponse;
   await accessSecret();
   console.log('Entering AuthZEN XACML Proxy');
   // 1. Prepare request to XACML Authorization Service (PDP)
@@ -77,7 +74,7 @@ app.post('/access/v1/evaluation', async (req, res) => {
   )
   // 2. Process the response - convert from a XACML/JSON response into an AuthZEN response
   .then(function (xr) {
-    xacmlResponse = xr;
+    let xacmlResponse = xr;
     console.log('PDP replied fine so processing response');
     console.log('Processing response and returning 200');
     console.log(xacmlResponse);
@@ -87,7 +84,6 @@ app.post('/access/v1/evaluation', async (req, res) => {
     console.log('Processing error and returning 500');
     console.error('AuthZEN - XACML Exception Whoops!');
     console.error(error);
-    isError = true;
     res.status(500).send(error);
   });
 });

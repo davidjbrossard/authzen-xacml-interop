@@ -21,8 +21,7 @@ async function accessSecret() {
 const app = express();
 app.use(express.json());
 // Serve the files in /assets at the URI /assets.
-app.use('/www/assets', express.static('assets'));
-app.use('/www/images', express.static('images'));
+app.use('/assets', express.static('assets'));
 
 // The HTML content is produced by rendering a handlebars template.
 // The template values are stored in global state for reuse.
@@ -37,7 +36,7 @@ app.get('/', async (req, res) => {
   if (!template) {
     // Load Handlebars template from filesystem and compile for use.
     try {
-      template = handlebars.compile(readFileSync('www/index.html', 'utf8'));
+      template = handlebars.compile(readFileSync('index.html.hbs', 'utf8'));
     } catch (e) {
       console.error(e);
       res.status(500).send('Internal Server Error');
@@ -54,7 +53,7 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.post('/access/v1/evaluations', async (req, res) => {
+app.post('/access/v1/evaluation', async (req, res) => {
   let isError = false;
   let authZenResponse = { decision: true };
   let xacmlResponse;

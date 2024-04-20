@@ -74,11 +74,9 @@ app.post('/access/v1/evaluation', async (req, res) => {
   )
   // 2. Process the response - convert from a XACML/JSON response into an AuthZEN response
   .then(function (xr) {
-    let xacmlResponse = xr;
     console.log('PDP replied fine so processing response');
     console.log('Processing response and returning 200');
-    console.log(xacmlResponse);
-    res.status(200).send(translateXACMLResponse(xacmlResponse)).contentType('application/json');
+    res.status(200).send(translateXACMLResponse(xr)).contentType('application/json');
   })
   .catch(function (error) {
     console.log('Processing error and returning 500');

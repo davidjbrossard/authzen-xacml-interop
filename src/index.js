@@ -6,13 +6,15 @@ const { buildXACMLRequest } = require('./buildXACMLRequest');
 const { translateXACMLResponse } = require('./translateXACMLResponse');
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 
-const URL = 'http://ec2-3-92-139-55.compute-1.amazonaws.com/authorize';
-const USERNAME = 'ads-user';
+// const URL = 'http://ec2-3-92-139-55.compute-1.amazonaws.com/authorize';
+const URL = 'https://ads-authzen-interop-vji43cydea-uc.a.run.app/application/authorize';
+// const USERNAME = 'ads-user';
+const USERNAME = 'authz-user';
 
 const client = new SecretManagerServiceClient();
 async function accessSecret() {
   const [version] = await client.accessSecretVersion({
-    name: 'projects/549681914412/secrets/PDP_PASSWORD/versions/1',
+    name: 'projects/549681914412/secrets/PDP_PASSWORD/versions/2',
   });
   const payload = version.payload.data.toString('utf8');
   PASSWORD = payload;

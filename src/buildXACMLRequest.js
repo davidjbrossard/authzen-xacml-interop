@@ -7,7 +7,7 @@ const CATEGORY_MAPPINGS = {
 
 function buildXACMLRequest(authzenRequest) {
   console.log("Entering the AuthZEN - XACML/JSON Translator");
-  let wrapper = { Request: { AccessSubject: [], Action: [], Resource: [], Environment: [] } };
+  let wrapper = { Request: { AccessSubject: [{Attribute:[]}], Action: [{Attribute:[]}], Resource: [{Attribute:[]}], Environment: [{Attribute:[]}] } };
   let categories = Object.keys(authzenRequest);
   categories.forEach((category) => {
     // console.log('Found category '+category);
@@ -19,8 +19,8 @@ function buildXACMLRequest(authzenRequest) {
       attributes.forEach(attribute => {
         // console.log('Found attribute '+attribute);
         // console.log('Found value '+authzenRequest[category][attribute]);
-        let xacmlAttribute = {Attribute:[{AttributeId: attribute, Value: authzenRequest[category][attribute]}]};
-        wrapper.Request[CATEGORY_MAPPINGS[category]].push(xacmlAttribute);
+        let xacmlAttribute = {AttributeId: attribute, Value: authzenRequest[category][attribute]};
+        wrapper.Request[CATEGORY_MAPPINGS[category]][0].Attribute.push(xacmlAttribute);
       });
     }
   });

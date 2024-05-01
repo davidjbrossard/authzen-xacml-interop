@@ -1,7 +1,6 @@
 const express = require('express');
 const {readFileSync} = require('fs');
 const handlebars = require('handlebars');
-const axios = require('axios');
 const { buildXACMLRequest } = require('./buildXACMLRequest');
 const { translateXACMLResponse } = require('./translateXACMLResponse');
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
@@ -61,6 +60,7 @@ app.post('/access/v1/evaluation', async (req, res) => {
   await accessSecret();
   console.log('Entering AuthZEN XACML Proxy');
   // 1. Prepare request to XACML Authorization Service (PDP)
+  const axios = require('axios');
   axios.post(URL, 
     // 1.a Translate the incoming request from AuthZEN into XACML
       buildXACMLRequest(req.body),
@@ -78,7 +78,7 @@ app.post('/access/v1/evaluation', async (req, res) => {
   .then(function (xr) {
     console.log('PDP replied fine so processing response');
     console.log('Processing response and returning 200');
-    res.status(200).send(translateXACMLResponse(xr)).contentType('application/json');
+    res.status(200).contentType('application/json').send(translateXACMLResponse(xr));
   })
   .catch(function (error) {
     console.log('Processing error and returning 500');

@@ -4,6 +4,7 @@ const handlebars = require('handlebars');
 const { buildXACMLRequest } = require('./buildXACMLRequest');
 const { translateXACMLResponse } = require('./translateXACMLResponse');
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
+const axios = require('axios');
 
 // const URL = 'http://ec2-3-92-139-55.compute-1.amazonaws.com/authorize';
 const URL = 'https://ads-authzen-interop-vji43cydea-uc.a.run.app/application/authorize';
@@ -21,8 +22,6 @@ async function accessSecret() {
 
 const app = express();
 app.use(express.json());
-// Serve the files in /assets at the URI /assets.
-// app.use('/assets', express.static('assets'));
 app.use('/assets', express.static('www/assets'));
 app.use('/images', express.static('www/images'));
 
@@ -60,7 +59,6 @@ app.post('/access/v1/evaluation', async (req, res) => {
   await accessSecret();
   console.log('Entering AuthZEN XACML Proxy');
   // 1. Prepare request to XACML Authorization Service (PDP)
-  const axios = require('axios');
   axios.post(URL, 
     // 1.a Translate the incoming request from AuthZEN into XACML
       buildXACMLRequest(req.body),
@@ -76,21 +74,19 @@ app.post('/access/v1/evaluation', async (req, res) => {
   )
   // 2. Process the response - convert from a XACML/JSON response into an AuthZEN response
   .then(function (xr) {
-    console.log('PDP replied fine so processing response');
-    console.log('Processing response and returning 200');
+    console.log('Processing response from PDP and translating from XACML into AuthZEN');
     res.status(200).contentType('application/json').send(translateXACMLResponse(xr));
   })
   .catch(function (error) {
-    console.log('Processing error and returning 500');
-    console.error('AuthZEN - XACML Exception Whoops!');
+    console.error('Error invoking the PDP or processing the response.');
     console.error(error);
-    res.status(500).send(error);
+    res.status(500).send('Could not complete the request. Please check your logs.');
   });
 });
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(
-    `Hello from Cloud Run! The container started successfully and is listening for HTTP requests on ${PORT}`
+    `AuthZEN-to-XACML Proxy now running on port ${PORT}`
   );
 });

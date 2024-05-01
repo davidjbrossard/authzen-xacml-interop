@@ -1,0 +1,48 @@
+namespace authzen{
+	namespace user {
+        attribute identity {
+            //id = "user.identity"
+            id = "identity"
+            type = string
+            category = subjectCat
+	    }
+		attribute role {
+            id = "user.role"
+            type = string
+            category = subjectCat
+	    }
+		attribute email {
+            id = "user.email"
+            type = string
+            category = subjectCat
+	    }
+	} // user namespace
+	
+    namespace object{
+        attribute objectType {
+            //id = "object.objectType"
+            id = "type"
+            type = string
+            category = resourceCat
+        }
+    }
+    namespace todo {
+		
+		attribute owner {
+            //id = "todo.owner"
+            id = "ownerID"
+            type = string
+            category = resourceCat
+	    }
+	
+	} // todo namespace
+	
+	namespace action {
+		attribute actionId {
+            //id = "action.actionId"
+            id = "name"
+            type = string
+            category = actionCat
+	    }
+    }  // action namespace
+}

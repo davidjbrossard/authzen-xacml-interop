@@ -1,0 +1,68 @@
+namespace authzen.interop {
+import authzen.*
+
+/*
+ * The Main Policyset
+ */
+policyset main{
+	apply firstApplicable
+	/*
+	 * Policy for ToDo's
+	 */
+	policyset todo{
+		target clause stringEqualIgnoreCase("todo", object.objectType)
+	    apply denyUnlessPermit	
+		policy read{ 
+			target clause stringEqualIgnoreCase("can_read_todos", action.actionId)
+			apply permitUnlessDeny
+		} // read
+		policy create{ 
+			target clause stringEqualIgnoreCase("can_create_todo", action.actionId)
+			apply denyUnlessPermit
+
+			rule evilGeniusAllowed{
+				permit
+				target clause stringEqualIgnoreCase("admin", user.role) or
+							stringEqualIgnoreCase("editor", user.role)
+			}
+		} //create
+		policy update{ 
+			target clause stringEqualIgnoreCase("can_update_todo", action.actionId)
+			apply denyUnlessPermit
+
+			rule evilGeniusAllowed{
+				permit
+				target clause stringEqualIgnoreCase("evil_genius", user.role)
+			}
+			rule editorAndOwnerAllowed{ 
+				permit
+				target clause stringEqualIgnoreCase("editor", user.role)
+				condition anyOfAny(function[stringEqualIgnoreCase], todo.owner, user.email)
+			}
+		} //update
+		policy delete{ 
+			target clause stringEqualIgnoreCase("can_delete_todo", action.actionId)
+			apply denyUnlessPermit
+
+			rule evilGeniusAllowed{
+				permit
+				target clause stringEqualIgnoreCase("admin", user.role)
+			}
+			rule editorAndOwnerAllowed{ 
+				permit
+				target clause stringEqualIgnoreCase("editor", user.role)
+				condition anyOfAny(function[stringEqualIgnoreCase], todo.owner, user.email)
+			}
+		} //delete
+	} //todo
+	policyset users{ 
+		target clause stringEqualIgnoreCase("user", object.objectType)
+		apply denyUnlessPermit
+		policy read{
+			target clause stringEqualIgnoreCase("can_read_user", action.actionId)
+			apply permitUnlessDeny
+
+		} //read
+	} //users
+} // main
+} // authzen.inertop

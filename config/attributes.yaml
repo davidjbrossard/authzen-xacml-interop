@@ -1,0 +1,24 @@
+action.actionId:
+  xacmlId: name
+  category: Action
+  datatype: string 
+object.objectType:
+  xacmlId: type
+  category: Resource
+  datatype: string
+todo.owner:
+  xacmlId: ownerID
+  category: Resource
+  datatype: string
+user.identity:
+  xacmlId: identity
+  category: AccessSubject
+  datatype: string
+user.role:
+  xacmlId: user.role
+  category: AccessSubject
+  datatype: string
+user.email:
+  xacmlId: user.email
+  category: AccessSubject
+  datatype: string

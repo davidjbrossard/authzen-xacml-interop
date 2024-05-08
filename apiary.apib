@@ -1,0 +1,41 @@
+FORMAT: 1A
+HOST: https://pdp.alfa.guide/
+
+# AuthZEN
+
+AuthZEN is a an OpenID Foundation Working Group aimed at:
+- Standardizing a request/response protocol for externalized authorization decisions
+- Producing a set of authorization design patterns for developers to follow and implement fine-grained authorization in their products.
+- Educating on the topic of externalized authorization from ABAC to ReBAC, Graph, and more.
+
+## Authorization API [/access/v1/evaluation]
+
+### Request Authorization Decision [POST]
+
+Send in an authorization request using this action. It takes a JSON
+object containing a map of categories each of which contain key-value pairs representing
+authorization decisions. For instance, if one would like to ask `Can Alice view record #123?`
+the request would look like
+
++ Request (application/json)
+
+        {
+            "subject": {
+                "username": "Alice"
+            },
+            "action": {
+                "name": "view"
+            },
+            "resource": {
+                "type": "record",
+                "recordId": 123
+            }
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+              "decision": true
+            }

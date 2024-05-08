@@ -15,7 +15,7 @@ AuthZEN is a an OpenID Foundation Working Group aimed at:
 Send in an authorization request using this action. It takes a JSON
 object containing a map of categories each of which contain key-value pairs representing
 authorization decisions. For instance, if one would like to ask `Can Alice view record #123?`
-the request would look like
+the request would look like:
 
 + Request (application/json)
 
@@ -31,6 +31,7 @@ the request would look like
                 "recordId": 123
             }
         }
+        
 
 + Response 200 (application/json)
 

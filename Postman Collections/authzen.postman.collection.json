@@ -1,0 +1,1355 @@
+{
+	"info": {
+		"_postman_id": "6b6189d6-dbf7-4a09-aa50-a6d64b2486f9",
+		"name": "AuthZEN Identiverse 2024 Interop",
+		"description": "# 🚀 Get started here\n\nThis template illustrates the sample payloads for the AuthZEN-compatible PDP as described in these [meeting minutes](https://hackmd.io/@oidf-wg-authzen/HJmNGw3i6).\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nThis collection contains an authorization request per scenario (view, edit, create todo items). Based on the PDP's configuration, we're expecting different decisions. Sample requests for the Interop are described [here](https://raw.githubusercontent.com/openid/authzen/main/interop/authzen-todo-backend/test/decisions.json).\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size. Responses can either be true (Permit) or false (Deny).\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. POST is the new verb supported by the PDP\n\n``` json\n{\n  \"subject\": {\n    \"identity\": \"<subject_from_jwt>\"\n  },\n  \"action\": {\n    \"name\": \"can_update_todo\"\n  },\n  \"resource\": {\n    \"ownerID\": \"<email_of_owner>\",\n    \"type\": \"todo\"\n  },\n  \"context\": {\n  }\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created two variables:\n\n- `host`: this contains the domain name of the place where your PDP is running e.g. `pdp.alfa.guide`. Change it to your own environment.\n    \n- `pdp_url`: This variable is made up of `{{host}}` and the value agreed upon for the AuthZEN endpoint: `{{host}}/access/v1/evaluation`. You don't need to change this value.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Rick",
+			"item": [
+				{
+					"name": "Can Rick Sanchez read Beth's information?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "77f3093a-073f-4883-a74e-b41eb252df56",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "fa26f185-2291-4d26-8111-426bf9d70cdb",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"subject\": {\r\n        \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n    },\r\n    \"action\": {\r\n        \"name\": \"can_read_user\"\r\n    },\r\n    \"resource\": {\r\n        \"type\": \"user\",\r\n        \"userID\": \"beth@the-smiths.com\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": [
+						{
+							"id": "b0552e1c-2d73-4f6e-b82b-ef8b2aebc541",
+							"name": "Decision: true/permit",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"subject\": {\r\n    \"identity\": \"<subject_from_jwt>\"\r\n  },\r\n  \"action\": {\r\n    \"name\": \"can_read_user\"\r\n  },\r\n  \"resource\": {\r\n    \"userID\": \"<email_OR_subject>\"\r\n  },\r\n  \"context\": {\r\n  }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/info?id=1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"info"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\r\n  \"decision\": true\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Can Rick Sanchez read his own information?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bc7663d0-566b-4fe6-a0ea-fd8958fd4b5a",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "9ea41204-f53b-4e20-aa8a-b3c78641b0e4",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_user\"\n    },\n    \"resource\": {\n        \"type\": \"user\",\n        \"userID\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Rick Sanchez read his own todo list?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d14481d4-4d28-4511-93ea-f0b9a205a6a8",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "661a0f08-2b46-42d6-98cc-c1894de721e7",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_todos\"\n    },\n    \"resource\": {\n        \"type\": \"todo\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": [
+						{
+							"id": "ef58df71-c8a6-4982-8611-d4a0ab0deda1",
+							"name": "Decision: true",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_todos\"\n    },\n    \"resource\": {\n        \"type\": \"todo\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{pdp_url}}"
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\r\n  \"decision\": true\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Can Rick Sanchez create a Todo Item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "417fb795-69ed-49bc-befd-0b2c64d65dbd",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "e72e6991-48ab-48d0-8294-d1ca2905d786",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"subject\": {\r\n        \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n    },\r\n    \"action\": {\r\n        \"name\": \"can_create_todo\"\r\n    },\r\n    \"resource\": {\r\n        \"type\": \"todo\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Rick Sanchez update his own Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "28eda73c-29a4-4fc2-bca8-88753d147ce6",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"const jsonResponse = pm.response.json();\r",
+									"pm.test(\"Test the Decision\", () => {\r",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");\r",
+									"  pm.expect(jsonResponse.decision).to.eql(true);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "b45d3924-c5f4-4531-8347-7b130c9d3f17",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"subject\": {\r\n        \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n    },\r\n    \"action\": {\r\n        \"name\": \"can_update_todo\"\r\n    },\r\n    \"resource\": {\r\n        \"type\": \"todo\",\r\n        \"ownerID\": \"rick@the-citadel.com\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Rick Sanchez update Morty's Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "958c5a5a-bc3b-42ab-b846-beca702f63f3",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"const jsonResponse = pm.response.json();\r",
+									"pm.test(\"Test the Decision\", () => {\r",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");\r",
+									"  pm.expect(jsonResponse.decision).to.eql(true);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "9f8fbf75-9600-47d4-8ace-908c138682a5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_update_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"morty@the-citadel.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Rick Sanchez delete his own Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cb286bdd-7954-4b5e-a9cd-d9b2f120ebf1",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"const jsonResponse = pm.response.json();\r",
+									"pm.test(\"Test the Decision\", () => {\r",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");\r",
+									"  pm.expect(jsonResponse.decision).to.eql(true);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "7bbb5f6d-aff9-4533-bfe9-83cc29493029",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_delete_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"rick@the-citadel.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Rick Sanchez delete Morty's Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f7c55bf6-c190-4ea3-ac82-5c8dda2515d0",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"const jsonResponse = pm.response.json();\r",
+									"pm.test(\"Test the Decision\", () => {\r",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");\r",
+									"  pm.expect(jsonResponse.decision).to.eql(true);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "4d210b1f-5320-4734-8bd3-1f36246d6eb3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_delete_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"morty@the-citadel.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				}
+			],
+			"id": "905bb072-9de7-48ef-914f-7efe8fa8e6af",
+			"description": "This folder contains a set of sample authorization requests for the user Rick."
+		},
+		{
+			"name": "Morty",
+			"item": [
+				{
+					"name": "Can Morty Smith read Beth's information?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "77f3093a-073f-4883-a74e-b41eb252df56",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "d567be38-8de4-472e-8979-72e7353a6c55",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_read_user\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"user\",\r\n          \"userID\": \"beth@the-smiths.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": [
+						{
+							"id": "af2005b6-b256-404b-ad24-0216a125de6c",
+							"name": "Decision: true/permit",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_read_user\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"user\",\r\n          \"userID\": \"beth@the-smiths.com\"\r\n        }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{pdp_url}}"
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\r\n  \"decision\": true\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Can Morty Smith read his own information?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bc7663d0-566b-4fe6-a0ea-fd8958fd4b5a",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "45885282-4ea3-4570-b495-d74e586a4b36",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_user\"\n    },\n    \"resource\": {\n        \"type\": \"user\",\n        \"userID\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Morty Smith read his own todo list?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d14481d4-4d28-4511-93ea-f0b9a205a6a8",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "63c059fd-fdd3-4fe8-9363-94783e76e9c2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_todos\"\n    },\n    \"resource\": {\n        \"type\": \"todo\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": [
+						{
+							"id": "0801b53e-b87b-411f-a661-67f5d1f2c47f",
+							"name": "Beth cannot create a todo",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_todos\"\n    },\n    \"resource\": {\n        \"type\": \"todo\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{pdp_url}}"
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\r\n  \"decision\": true\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Can Morty Smith create a Todo Item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "417fb795-69ed-49bc-befd-0b2c64d65dbd",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "2895841a-d0b2-48aa-aa5a-dd2c7ea9062d",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"subject\": {\r\n        \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n    },\r\n    \"action\": {\r\n        \"name\": \"can_create_todo\"\r\n    },\r\n    \"resource\": {\r\n        \"type\": \"todo\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Morty Smith update Rick's Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "46894267-749f-4bf1-b62f-904526520e2d",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(false);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "ca02769d-a9eb-4227-b7f8-f99907130ad6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"subject\": {\r\n        \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n    },\r\n    \"action\": {\r\n        \"name\": \"can_update_todo\"\r\n    },\r\n    \"resource\": {\r\n        \"type\": \"todo\",\r\n        \"ownerID\": \"rick@the-citadel.com\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Morty Smith update Morty's Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c8848d0e-05b1-4f8e-ad36-974b2049c91f",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "8800f5f0-acef-4f9a-b5ee-aa50bfc78628",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_update_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"morty@the-citadel.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Morty Smith delete his own Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6e0bb310-6de6-416a-8c42-357082cf14e6",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "d6808bcd-d018-43ef-82f7-58d947e37bbc",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_delete_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"morty@the-citadel.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": [
+						{
+							"id": "dbe1ad64-19c8-4b47-b96c-92942cbb4c2d",
+							"name": "Morty can delete his own todo",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_delete_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"morty@the-citadel.com\"\r\n        }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{pdp_url}}"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "x-powered-by",
+									"value": "Express"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "etag",
+									"value": "W/\"11-xcnIuLU9hg9dVwTSdleKfvEGoVc\""
+								},
+								{
+									"key": "X-Cloud-Trace-Context",
+									"value": "3495b64969fb4e27b94c2822084dc98f"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 30 Apr 2024 21:49:59 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Google Frontend"
+								},
+								{
+									"key": "Content-Length",
+									"value": "17"
+								}
+							],
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\n    \"decision\": true\n}"
+						}
+					]
+				},
+				{
+					"name": "Can Morty Smith delete Morty's Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6ad21d1f-3a95-4b4b-a7b3-974aa1dfaf12",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(false);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "e6abe5f6-dab1-4e5b-a02f-f8358f0783cc",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_delete_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"rick@the-citadel.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				}
+			],
+			"id": "ceefc9fa-440a-42cb-b42a-69d6c4a3a9ce",
+			"description": "This folder contains a set of sample authorization requests for the user Morty."
+		},
+		{
+			"name": "Summer Smith",
+			"item": [
+				{
+					"name": "Can Summer Smith read Beth's information?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "77f3093a-073f-4883-a74e-b41eb252df56",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "9724f59d-7ce3-43e0-940c-9fcc23aed01b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_read_user\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"user\",\r\n          \"userID\": \"beth@the-smiths.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": [
+						{
+							"id": "d1886cc2-cd64-411f-bdde-750a574295a3",
+							"name": "Decision: true/permit",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_read_user\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"user\",\r\n          \"userID\": \"beth@the-smiths.com\"\r\n        }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{pdp_url}}"
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\r\n  \"decision\": true\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Can Summer Smith read his own information?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bc7663d0-566b-4fe6-a0ea-fd8958fd4b5a",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "7e8b76f3-1d4b-4ef3-b127-15ad115304a4",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_user\"\n    },\n    \"resource\": {\n        \"type\": \"user\",\n        \"userID\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Summer Smith read his own todo list?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d14481d4-4d28-4511-93ea-f0b9a205a6a8",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "25807c65-8462-4318-a838-d850bb8b279e",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_todos\"\n    },\n    \"resource\": {\n        \"type\": \"todo\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": [
+						{
+							"id": "7d461b12-9c99-44a0-aada-84019ddcd0c3",
+							"name": "Beth cannot create a todo",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"subject\": {\n        \"identity\": \"CiRmZDA2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\n    },\n    \"action\": {\n        \"name\": \"can_read_todos\"\n    },\n    \"resource\": {\n        \"type\": \"todo\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{pdp_url}}"
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\r\n  \"decision\": true\r\n}"
+						}
+					]
+				},
+				{
+					"name": "Can Summer Smith create a Todo Item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "417fb795-69ed-49bc-befd-0b2c64d65dbd",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "31999bb8-25e5-4aa3-bc37-08554641e354",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"subject\": {\r\n        \"identity\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n    },\r\n    \"action\": {\r\n        \"name\": \"can_create_todo\"\r\n    },\r\n    \"resource\": {\r\n        \"type\": \"todo\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Summer Smith update Rick's Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "316bd7b8-1e4c-4e11-b0df-dbe2765f1c33",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(false);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "b064a657-726d-42b6-8913-4006784244b8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"subject\": {\r\n        \"identity\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n    },\r\n    \"action\": {\r\n        \"name\": \"can_update_todo\"\r\n    },\r\n    \"resource\": {\r\n        \"type\": \"todo\",\r\n        \"ownerID\": \"rick@the-citadel.com\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Summer Smith update her own Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f1707b1f-b602-4f17-9202-90204dda0d2f",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "9b24f96a-855c-4356-9c14-9a265a025f95",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_update_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"summer@the-smiths.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				},
+				{
+					"name": "Can Summer Smith delete her own Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2f4ae1fe-cb63-4fa3-bc84-7ff6fc51923b",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "a85edcb0-8192-4362-a94b-b34952b72b25",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_delete_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"summer@the-smiths.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": [
+						{
+							"id": "aba7f362-19b8-4209-b29f-31bd26b358e3",
+							"name": "Morty can delete his own todo",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_delete_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"morty@the-citadel.com\"\r\n        }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{pdp_url}}"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "x-powered-by",
+									"value": "Express"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "etag",
+									"value": "W/\"11-xcnIuLU9hg9dVwTSdleKfvEGoVc\""
+								},
+								{
+									"key": "X-Cloud-Trace-Context",
+									"value": "3495b64969fb4e27b94c2822084dc98f"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 30 Apr 2024 21:49:59 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Google Frontend"
+								},
+								{
+									"key": "Content-Length",
+									"value": "17"
+								}
+							],
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\n    \"decision\": true\n}"
+						}
+					]
+				},
+				{
+					"name": "Can Summer Smith delete Ricks's Todo item?",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "360d7c30-b2a6-499b-80fe-9bb36b903051",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"const jsonResponse = pm.response.json();",
+									"pm.test(\"Test the Decision\", () => {",
+									"  pm.expect(jsonResponse).to.be.an(\"object\");",
+									"  pm.expect(jsonResponse.decision).to.eql(false);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"id": "7f61a48b-77da-4d33-8594-39bae013394d",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"subject\": {\r\n          \"identity\": \"CiRmZDI2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs\"\r\n        },\r\n        \"action\": {\r\n          \"name\": \"can_delete_todo\"\r\n        },\r\n        \"resource\": {\r\n          \"type\": \"todo\",\r\n          \"ownerID\": \"rick@the-citadel.com\"\r\n        }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{pdp_url}}",
+						"description": "This is a REST/JSON POST request that conforms to the OpenID AuthZEN request/response format. It can be used to prove interoperability with the AuthZEN specification. See [details here](https://authzen-interop.net/)."
+					},
+					"response": []
+				}
+			],
+			"id": "871c6567-f0ae-44ea-937d-dc7929ece419",
+			"description": "This folder contains a set of sample authorization requests for the user Beth."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f92d745b-af3f-41d4-ae2c-d074de5f4ea1",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a8d4e707-5b6b-4378-8ccc-0605fe449413",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "https://pdp.alfa.guide",
+			"type": "string"
+		},
+		{
+			"key": "pdp_url",
+			"value": "{{host}}/access/v1/evaluation"
+		}
+	]
+}

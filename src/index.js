@@ -1,7 +1,7 @@
 const express = require('express');
 const {readFileSync} = require('fs');
 const handlebars = require('handlebars');
-const { buildXACMLRequest } = require('./buildXACMLRequest');
+const { buildXACMLRequest, buildCustomXACMLRequest } = require('./buildXACMLRequest');
 const { translateXACMLResponse } = require('./translateXACMLResponse');
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 const axios = require('axios');
@@ -91,12 +91,21 @@ app.post('/access/v1/evaluation', async (req, res) => {
 });
 
 app.post('/thales/access/v1/evaluation', async (req, res) => {
-  console.log('Entering AuthZEN XACML Proxy for AuthZForce PDP (Thales)');
+  callPDP(req, res, URLS.thales.url,'','', true);
+});
+
+function callPDP(req, res, url, username, password, custom){
+  console.log('Entering AuthZEN XACML Proxy');
   // 1. Prepare request to XACML Authorization Service (PDP)
-  axios.post(URLS.thales.url, 
+  let payload = custom? buildCustomXACMLRequest(req.body):buildXACMLRequest(req.body);
+  axios.post(url, 
     // 1.a Translate the incoming request from AuthZEN into XACML
-      buildXACMLRequest(req.body),
+      payload,
       {
+        auth: {
+          username: username,
+          password: password
+        },
         headers: {
           'Content-Type': 'application/json'
         }
@@ -112,7 +121,7 @@ app.post('/thales/access/v1/evaluation', async (req, res) => {
     console.error(error);
     res.status(500).send('Could not complete the request. Please check your logs.');
   });
-});
+}
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

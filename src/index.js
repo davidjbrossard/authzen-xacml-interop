@@ -7,9 +7,15 @@ const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 const axios = require('axios');
 
 // const URL = 'http://ec2-3-92-139-55.compute-1.amazonaws.com/authorize';
-const URL = 'https://ads-authzen-interop-vji43cydea-uc.a.run.app/application/authorize';
-// const USERNAME = 'ads-user';
-const USERNAME = 'authz-user';
+const URLS = {
+  axiomatics: {
+    url: 'https://ads-authzen-interop-vji43cydea-uc.a.run.app/application/authorize',
+    username: 'authz-user'
+  },
+  thales: {
+    url: 'https://restful-pdp-vji43cydea-uc.a.run.app/services/pdp'
+  }
+};
 
 const client = new SecretManagerServiceClient();
 async function accessSecret() {
@@ -59,14 +65,38 @@ app.post('/access/v1/evaluation', async (req, res) => {
   await accessSecret();
   console.log('Entering AuthZEN XACML Proxy');
   // 1. Prepare request to XACML Authorization Service (PDP)
-  axios.post(URL, 
+  axios.post(URLS.axiomatics.url, 
     // 1.a Translate the incoming request from AuthZEN into XACML
       buildXACMLRequest(req.body),
       {
         auth: {
-          username: USERNAME,
+          username: URLS.axiomatics.username,
           password: PASSWORD
         },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+  )
+  // 2. Process the response - convert from a XACML/JSON response into an AuthZEN response
+  .then(function (xr) {
+    console.log('Processing response from PDP and translating from XACML into AuthZEN');
+    res.status(200).contentType('application/json').send(translateXACMLResponse(xr));
+  })
+  .catch(function (error) {
+    console.error('Error invoking the PDP or processing the response.');
+    console.error(error);
+    res.status(500).send('Could not complete the request. Please check your logs.');
+  });
+});
+
+app.post('/thales/access/v1/evaluation', async (req, res) => {
+  console.log('Entering AuthZEN XACML Proxy for AuthZForce PDP (Thales)');
+  // 1. Prepare request to XACML Authorization Service (PDP)
+  axios.post(URLS.thales.url, 
+    // 1.a Translate the incoming request from AuthZEN into XACML
+      buildXACMLRequest(req.body),
+      {
         headers: {
           'Content-Type': 'application/json'
         }

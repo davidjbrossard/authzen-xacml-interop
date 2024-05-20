@@ -938,7 +938,7 @@
 					]
 				},
 				{
-					"name": "Can Summer Smith read his own information?",
+					"name": "Can Summer Smith read her own information?",
 					"event": [
 						{
 							"listen": "test",

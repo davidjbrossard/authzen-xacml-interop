@@ -821,7 +821,7 @@
 					]
 				},
 				{
-					"name": "Can Morty Smith delete Morty's Todo item?",
+					"name": "Can Morty Smith delete Rick's Todo item?",
 					"event": [
 						{
 							"listen": "test",
@@ -1272,7 +1272,7 @@
 					]
 				},
 				{
-					"name": "Can Summer Smith delete Ricks's Todo item?",
+					"name": "Can Summer Smith delete Rick's Todo item?",
 					"event": [
 						{
 							"listen": "test",

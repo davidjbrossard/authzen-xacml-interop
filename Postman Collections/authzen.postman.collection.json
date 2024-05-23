@@ -1323,7 +1323,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "e153a114-7dd7-42d4-b4ec-f542f0c9abd5",
+				"id": "bef98ec4-0c44-466c-ac2d-cbecee31d7d6",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1333,7 +1333,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "c905644a-9704-4321-af90-0846ac28aae3",
+				"id": "13c1a0a1-9d55-4502-a98f-531a77f59a6b",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1350,6 +1350,11 @@
 		{
 			"key": "pdp_url",
 			"value": "{{host}}/access/v1/evaluation"
+		},
+		{
+			"key": "authzforce",
+			"value": "https://restful-pdp-vji43cydea-uc.a.run.app",
+			"type": "string"
 		}
 	]
 }

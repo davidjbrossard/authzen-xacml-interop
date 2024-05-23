@@ -1323,7 +1323,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "f48ffc56-4084-465f-8de5-9959292cbe10",
+				"id": "e153a114-7dd7-42d4-b4ec-f542f0c9abd5",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1333,7 +1333,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "49f7e56c-188e-4101-9758-f35f558d93f6",
+				"id": "c905644a-9704-4321-af90-0846ac28aae3",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1350,11 +1350,6 @@
 		{
 			"key": "pdp_url",
 			"value": "{{host}}/access/v1/evaluation"
-		},
-		{
-			"key": "authzforce_pdp_url",
-			"value": "{{host}}/thales/access/v1/evaluation",
-			"type": "string"
 		}
 	]
 }

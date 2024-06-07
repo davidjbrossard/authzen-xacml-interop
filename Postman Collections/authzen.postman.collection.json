@@ -1323,7 +1323,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "6fd863b1-c348-4ec9-86a9-808243575c0b",
+				"id": "d91a9f1f-1cda-4771-b9ec-9462518d9aac",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1333,7 +1333,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "adedd261-6a5e-4d70-99e0-7a51ad23f3d4",
+				"id": "ace889f7-1efd-4747-84d7-8000e3903fde",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1349,7 +1349,7 @@
 		},
 		{
 			"key": "pdp_url",
-			"value": "{{host}}/access/v1/evaluation"
+			"value": "{{authzforce}}/access/v1/evaluation"
 		},
 		{
 			"key": "authzforce",

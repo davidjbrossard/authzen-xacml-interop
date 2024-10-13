@@ -21,8 +21,17 @@ function buildXACMLRequest(authzenRequest) {
       console.dir(authzenRequest[category]);
       let attributes = Object.keys(authzenRequest[category]);
       attributes.forEach(attribute => {
-        let xacmlAttribute = {AttributeId: attribute, Value: authzenRequest[category][attribute]};
-        wrapper.Request[CATEGORY_MAPPINGS[category].shorthand][0].Attribute.push(xacmlAttribute);
+        // Add processing of the properties object
+        if (attribute==='properties'){
+          let props = authzenRequest[category][attribute];
+          props.forEach(p => {
+            let xacmlAttribute = {AttributeId: p, Value: props[p]};
+            wrapper.Request[CATEGORY_MAPPINGS[category].shorthand][0].Attribute.push(xacmlAttribute);
+          });
+        } else {
+          let xacmlAttribute = {AttributeId: attribute, Value: authzenRequest[category][attribute]};
+          wrapper.Request[CATEGORY_MAPPINGS[category].shorthand][0].Attribute.push(xacmlAttribute);
+        }
       });
     }
   });

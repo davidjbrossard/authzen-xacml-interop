@@ -821,7 +821,7 @@
 					]
 				},
 				{
-					"name": "Can Morty Smith delete Morty's Todo item?",
+					"name": "Can Morty Smith delete Rick's Todo item?",
 					"event": [
 						{
 							"listen": "test",
@@ -938,7 +938,7 @@
 					]
 				},
 				{
-					"name": "Can Summer Smith read his own information?",
+					"name": "Can Summer Smith read her own information?",
 					"event": [
 						{
 							"listen": "test",
@@ -1272,7 +1272,7 @@
 					]
 				},
 				{
-					"name": "Can Summer Smith delete Ricks's Todo item?",
+					"name": "Can Summer Smith delete Rick's Todo item?",
 					"event": [
 						{
 							"listen": "test",
@@ -1323,7 +1323,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "f48ffc56-4084-465f-8de5-9959292cbe10",
+				"id": "d91a9f1f-1cda-4771-b9ec-9462518d9aac",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1333,7 +1333,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "49f7e56c-188e-4101-9758-f35f558d93f6",
+				"id": "ace889f7-1efd-4747-84d7-8000e3903fde",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1349,11 +1349,11 @@
 		},
 		{
 			"key": "pdp_url",
-			"value": "{{host}}/access/v1/evaluation"
+			"value": "{{authzforce}}/access/v1/evaluation"
 		},
 		{
-			"key": "authzforce_pdp_url",
-			"value": "{{host}}/thales/access/v1/evaluation",
+			"key": "authzforce",
+			"value": "https://restful-pdp-vji43cydea-uc.a.run.app",
 			"type": "string"
 		}
 	]

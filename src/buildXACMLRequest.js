@@ -24,7 +24,9 @@ function buildXACMLRequest(authzenRequest) {
         // Add processing of the properties object
         if (attribute==='properties'){
           let props = authzenRequest[category][attribute];
-          props.forEach(p => {
+          let propNames = Object.keys(props);
+          console.log("the props are "+ propNames);
+          propNames.forEach(p => {
             let xacmlAttribute = {AttributeId: p, Value: props[p]};
             wrapper.Request[CATEGORY_MAPPINGS[category].shorthand][0].Attribute.push(xacmlAttribute);
           });

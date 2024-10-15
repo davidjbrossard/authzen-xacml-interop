@@ -74,6 +74,36 @@ let boxcarAuthZENRequest = {
   ]
 };
 
+let interopBoxcarRequest = {
+  "subject": {
+    "type": "user",
+    "id": "CiRmZDQ2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs"
+  },
+  "action": {
+    "name": "can_update_todo"
+  },
+  "evaluations": [
+    {
+      "resource": {
+        "type": "todo",
+        "id": "7240d0db-8ff0-41ec-98b2-34a096273b9f",
+        "properties": {
+          "ownerID": "rick@the-citadel.com"
+        }
+      }
+    },
+    {
+      "resource": {
+        "type": "todo",
+        "id": "7240d0db-8ff0-41ec-98b2-34a096273b9f",
+        "properties": {
+          "ownerID": "jerry@the-smiths.com"
+        }
+      }
+    }
+  ]
+}
+
 describe('#buildXACMLRequest(authzenRequest)', function () {
   it('should translate a single AuthZEN request into a XACML request', function () {
       let wrapper = buildXACMLRequest(singleAuthzenRequest);
@@ -105,4 +135,8 @@ describe('#buildXACMLRequest(authzenRequest, "id3")', function () {
     assert.equal(wrapper.Request.MultiRequests.RequestReference.length, boxcarAuthZENRequest.evaluations.length);
     // FUTURE: validate that the XACML request is indeed a valid XACML request
   });
+
+
+
+
 });

@@ -20,31 +20,50 @@ function buildXACMLRequest(authzenRequest, prefix = "") {
 
   if (mdp) {
     wrapper.Request.MultiRequests = {RequestReference:[]};
+    // Now process the array of individual evaluations
     let counter = 0;
     authzenRequest.evaluations.forEach(singleEval => {
       let ref = {ReferenceId:[]};
       let categories = Object.keys(singleEval);
       categories.forEach((category) => {
         if (CATEGORY_MAPPINGS[category]!==undefined){
-          processCategory(singleEval[category], CATEGORY_MAPPINGS[category], wrapper, mdp, ref, prefix, counter);
+          let xc = processCategory(singleEval[category], CATEGORY_MAPPINGS[category], mdp, ref, prefix, counter);
+          wrapper.Request[CATEGORY_MAPPINGS[category].shorthand].push(xc);
         }
       });        
       wrapper.Request.MultiRequests.RequestReference.push(ref);
       counter++;
     });
   }
-  else {
-    categories.forEach((category) => {
-      if (CATEGORY_MAPPINGS[category]!==undefined){
-        processCategory(authzenRequest[category], CATEGORY_MAPPINGS[category], wrapper);
+  categories.forEach((category) => {
+    if (CATEGORY_MAPPINGS[category]!==undefined){
+      let xc = processCategory(authzenRequest[category], CATEGORY_MAPPINGS[category]);
+      if (mdp){
+        // Consider these as add-on attributes to the individual elements
+        wrapper = merge(CATEGORY_MAPPINGS[category], xc, wrapper);
+      } else {
+        wrapper.Request[CATEGORY_MAPPINGS[category].shorthand].push(xc);
       }
-    });
-  }
+    }
+  });
   return wrapper;
 }
 
-function processCategory(singleCat, mapping, wrapper, mdp = false, ref, prefix="", counter=0){
-  console.dir(singleCat);
+function merge(targetCategory, extraAttributes, mdpRequest){
+  console.log("################################# The things that need to be merged ###########")
+  console.log("Extra attributes: " + JSON.stringify(extraAttributes));
+  extraAttributes.Id=targetCategory.shorthand+1;
+  mdpRequest.Request[targetCategory.shorthand].push(extraAttributes);
+  console.log("mdpRequest.MultiRequests ====== "+mdpRequest.Request.MultiRequests);
+  mdpRequest.Request.MultiRequests.RequestReference.forEach(element => {
+    element.ReferenceId.push(targetCategory.shorthand+1);
+  });
+  console.log(JSON.stringify(mdpRequest));
+  console.log("################################# END The things that need to be merged ###########");
+  return mdpRequest;
+}
+
+function processCategory(singleCat, mapping, mdp = false, ref, prefix="", counter=0){
   let xacmlCategory = {Attribute: []};
   if (mdp){
     let localId = mapping.shorthand+"_"+prefix+counter;
@@ -72,7 +91,7 @@ function processCategory(singleCat, mapping, wrapper, mdp = false, ref, prefix="
       xacmlCategory.Attribute.push(xacmlAttribute);
     }
   });
-  wrapper.Request[mapping.shorthand].push(xacmlCategory);
+  return xacmlCategory;
 }
 
 // TODO: test this function

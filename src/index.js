@@ -99,7 +99,7 @@ async function evaluationsHandler(req, res) {
   // 1. Prepare request to XACML Authorization Service (PDP)
   axios.post(URLS.axiomatics.url, 
     // 1.a Translate the incoming request from AuthZEN into XACML
-      buildXACMLRequest(req.body, "mdp"),
+      buildXACMLRequest(req.body, "mdp_"),
       {
         auth: {
           username: URLS.axiomatics.username,
@@ -113,7 +113,7 @@ async function evaluationsHandler(req, res) {
   // 2. Process the response - convert from a XACML/JSON response into an AuthZEN response
   .then(function (xr) {
     console.log('Processing response from PDP and translating from XACML into AuthZEN');
-    res.status(200).contentType('application/json').send(translateXACMLResponse(xr));
+    res.status(200).contentType('application/json').send(translateXACMLResponse(xr.data));
   })
   .catch(function (error) {
     console.error('Error invoking the PDP or processing the response.');
@@ -147,7 +147,7 @@ function callPDP(req, res, url, username, password, custom){
   // 2. Process the response - convert from a XACML/JSON response into an AuthZEN response
   .then(function (xr) {
     console.log('Processing response from PDP and translating from XACML into AuthZEN');
-    res.status(200).contentType('application/json').send(translateXACMLResponse(xr));
+    res.status(200).contentType('application/json').send(translateXACMLResponse(xr.data));
   })
   .catch(function (error) {
     console.error('Error invoking the PDP or processing the response.');

@@ -1,5 +1,8 @@
 function translateXACMLResponse(xacmlResponse) {
   console.log('Translating XACML response into AuthZEN response');
+  if (xacmlResponse.Response===undefined){
+    throw new Error ('Invalid XACML Response '+ xacmlResponse);
+  }
   let mdp = xacmlResponse.Response.length>1;
   let authZenResponse = {};
   if (mdp){

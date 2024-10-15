@@ -12,50 +12,95 @@ const XACML_URLS = {
   "Environment": "urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
 }
 
-function buildXACMLRequest(authzenRequest) {
+function buildXACMLRequest(authzenRequest, prefix = "") {
   console.log("Entering the AuthZEN - XACML/JSON Translator");
-  let wrapper = { Request: { AccessSubject: [{Attribute:[]}], Action: [{Attribute:[]}], Resource: [{Attribute:[]}], Environment: [{Attribute:[]}] } };
+  let wrapper = { Request: { AccessSubject: [], Action: [], Resource: [], Environment: [] } };
   let categories = Object.keys(authzenRequest);
-  categories.forEach((category) => {
-    if (CATEGORY_MAPPINGS[category]!==undefined){
-      console.dir(authzenRequest[category]);
-      let attributes = Object.keys(authzenRequest[category]);
-      attributes.forEach(attribute => {
-        // Add processing of the properties object
-        if (attribute==='properties'){
-          let props = authzenRequest[category][attribute];
-          let propNames = Object.keys(props);
-          console.log("the props are "+ propNames);
-          propNames.forEach(p => {
-            let xacmlAttribute = {AttributeId: p, Value: props[p]};
-            wrapper.Request[CATEGORY_MAPPINGS[category].shorthand][0].Attribute.push(xacmlAttribute);
-          });
-        } else {
-          let xacmlAttribute = {AttributeId: attribute, Value: authzenRequest[category][attribute]};
-          wrapper.Request[CATEGORY_MAPPINGS[category].shorthand][0].Attribute.push(xacmlAttribute);
+  let mdp = authzenRequest.evaluations!==undefined; // if evaluations is present, treat as MDP
+
+  if (mdp) {
+    wrapper.Request.MultiRequests = {RequestReference:[]};
+    let counter = 0;
+    authzenRequest.evaluations.forEach(singleEval => {
+      let ref = {ReferenceId:[]};
+      let categories = Object.keys(singleEval);
+      categories.forEach((category) => {
+        if (CATEGORY_MAPPINGS[category]!==undefined){
+          processCategory(singleEval[category], CATEGORY_MAPPINGS[category], wrapper, mdp, ref, prefix, counter);
         }
-      });
-    }
-  });
+      });        
+      wrapper.Request.MultiRequests.RequestReference.push(ref);
+      counter++;
+    });
+  }
+  else {
+    categories.forEach((category) => {
+      if (CATEGORY_MAPPINGS[category]!==undefined){
+        processCategory(authzenRequest[category], CATEGORY_MAPPINGS[category], wrapper);
+      }
+    });
+  }
   return wrapper;
 }
 
-function buildCustomXACMLRequest(authzenRequest){
-  console.log("Entering the AuthZEN - custom XACML/JSON Translator");
+function processCategory(singleCat, mapping, wrapper, mdp = false, ref, prefix="", counter=0){
+  console.dir(singleCat);
+  let xacmlCategory = {Attribute: []};
+  if (mdp){
+    let localId = mapping.shorthand+"_"+prefix+counter;
+    xacmlCategory.Id=localId;
+    ref.ReferenceId.push(localId);
+  }
+  let attributes = Object.keys(singleCat);
+  attributes.forEach(attribute => {
+    // Add processing of the properties object
+    if (attribute==='properties'){
+      let props = singleCat[attribute];
+      let propNames = Object.keys(props);
+      propNames.forEach(p => {
+        let xacmlAttribute = {AttributeId: p, Value: props[p]};
+        if (mdp){
+          xacmlAttribute.IncludeInResult = true;
+        }
+        xacmlCategory.Attribute.push(xacmlAttribute);
+      });
+    } else {
+      let xacmlAttribute = {AttributeId: attribute, Value: singleCat[attribute]};
+      if (mdp){
+        xacmlAttribute.IncludeInResult = true;
+      }
+      xacmlCategory.Attribute.push(xacmlAttribute);
+    }
+  });
+  wrapper.Request[mapping.shorthand].push(xacmlCategory);
+}
+
+// TODO: test this function
+function buildVerboseXACMLRequest(authzenRequest, identifier){
+  console.log("Entering the AuthZEN - verbose XACML/JSON Translator");
   let wrapper = { Request: { Category: [] } };
-  let denseXACML = buildXACMLRequest(authzenRequest);
+  let mdp = authzenRequest.evaluations!==undefined; // if evaluations is present, treat as MDP
+  let denseXACML = buildXACMLRequest(authzenRequest, identifier);
   let categories = Object.keys(denseXACML.Request);
   categories.forEach((category) => {
     if (XACML_URLS[category]!==undefined){
       denseXACML.Request[category].forEach((denseCat)=>{
         let cat = {CategoryId: XACML_URLS[category],Attribute:denseCat.Attribute};
+        if (denseCat.Id!==undefined){
+          cat.Id = denseCat.Id;
+        }
         wrapper.Request.Category.push(cat);
       });
     }
   });
+  if (mdp){
+    // Add the ref elements
+    wrapper.Request.MultiRequests=denseXACML.MultiRequests;
+
+  }
   console.log("Custom XACML Request: "+JSON.stringify(wrapper));
   return wrapper;
 }
 
 exports.buildXACMLRequest = buildXACMLRequest;
-exports.buildCustomXACMLRequest = buildCustomXACMLRequest;
+exports.buildVerboseXACMLRequest = buildVerboseXACMLRequest;

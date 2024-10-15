@@ -1,12 +1,11 @@
 const express = require('express');
 const {readFileSync} = require('fs');
 const handlebars = require('handlebars');
-const { buildXACMLRequest, buildCustomXACMLRequest } = require('./buildXACMLRequest');
+const { buildXACMLRequest, buildVerboseXACMLRequest } = require('./buildXACMLRequest');
 const { translateXACMLResponse } = require('./translateXACMLResponse');
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 const axios = require('axios');
 
-// const URL = 'http://ec2-3-92-139-55.compute-1.amazonaws.com/authorize';
 const URLS = {
   axiomatics: {
     url: 'https://ads-authzen-interop-vji43cydea-uc.a.run.app/application/authorize',
@@ -61,13 +60,46 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.post('/access/v1/evaluation', async (req, res) => {
+app.post('/access/v1/evaluation', evaluationHandler);
+
+async function evaluationHandler(req, res){
   await accessSecret();
-  console.log('Entering AuthZEN XACML Proxy');
+  console.log('Entering AuthZEN XACML Proxy - Single Request');
   // 1. Prepare request to XACML Authorization Service (PDP)
   axios.post(URLS.axiomatics.url, 
     // 1.a Translate the incoming request from AuthZEN into XACML
       buildXACMLRequest(req.body),
+      {
+        auth: {
+          username: URLS.axiomatics.username,
+          password: PASSWORD
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+  )
+  // 2. Process the response - convert from a XACML/JSON response into an AuthZEN response
+  .then(function (xr) {
+    console.log('Processing response from PDP and translating from XACML into AuthZEN');
+    res.status(200).contentType('application/json').send(translateXACMLResponse(xr.data));
+  })
+  .catch(function (error) {
+    console.error('Error invoking the PDP or processing the response.');
+    console.error(error);
+    res.status(500).send('Could not complete the request. Please check your logs.');
+  });
+}
+
+app.post('/access/v1/evaluations', evaluationsHandler);
+
+async function evaluationsHandler(req, res) {
+  await accessSecret();
+  console.log('Entering AuthZEN XACML Proxy - MDP Request');
+  // 1. Prepare request to XACML Authorization Service (PDP)
+  axios.post(URLS.axiomatics.url, 
+    // 1.a Translate the incoming request from AuthZEN into XACML
+      buildXACMLRequest(req.body, "mdp"),
       {
         auth: {
           username: URLS.axiomatics.username,
@@ -88,7 +120,8 @@ app.post('/access/v1/evaluation', async (req, res) => {
     console.error(error);
     res.status(500).send('Could not complete the request. Please check your logs.');
   });
-});
+}
+
 
 app.post('/thales/access/v1/evaluation', async (req, res) => {
   callPDP(req, res, URLS.thales.url,'','', true);
@@ -97,7 +130,7 @@ app.post('/thales/access/v1/evaluation', async (req, res) => {
 function callPDP(req, res, url, username, password, custom){
   console.log('Entering AuthZEN XACML Proxy');
   // 1. Prepare request to XACML Authorization Service (PDP)
-  let payload = custom? buildCustomXACMLRequest(req.body):buildXACMLRequest(req.body);
+  let payload = custom? buildVerboseXACMLRequest(req.body):buildXACMLRequest(req.body);
   axios.post(url, 
     // 1.a Translate the incoming request from AuthZEN into XACML
       payload,

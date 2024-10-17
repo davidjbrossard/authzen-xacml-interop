@@ -31,6 +31,10 @@ function buildXACMLRequest(authzenRequest, prefix = "") {
           wrapper.Request[CATEGORY_MAPPINGS[category].shorthand].push(xc);
         }
       });        
+      let counterRefId = 'Environment_'+prefix+counter;
+      let counterAttribute = {Attribute: [{ AttributeId: 'counter', Value: counter, IncludeInResult: true }], Id: counterRefId};
+      wrapper.Request['Environment'].push(counterAttribute);
+      ref.ReferenceId.push(counterRefId);
       wrapper.Request.MultiRequests.RequestReference.push(ref);
       counter++;
     });
@@ -46,20 +50,21 @@ function buildXACMLRequest(authzenRequest, prefix = "") {
       }
     }
   });
+  console.log(JSON.stringify(wrapper));
   return wrapper;
 }
 
 function merge(targetCategory, extraAttributes, mdpRequest){
-  console.log("################################# The things that need to be merged ###########")
-  console.log("Extra attributes: " + JSON.stringify(extraAttributes));
+  // console.log("################################# The things that need to be merged ###########")
+  // console.log("Extra attributes: " + JSON.stringify(extraAttributes));
   extraAttributes.Id=targetCategory.shorthand+1;
   mdpRequest.Request[targetCategory.shorthand].push(extraAttributes);
-  console.log("mdpRequest.MultiRequests ====== "+mdpRequest.Request.MultiRequests);
+  // console.log("mdpRequest.MultiRequests ====== "+mdpRequest.Request.MultiRequests);
   mdpRequest.Request.MultiRequests.RequestReference.forEach(element => {
     element.ReferenceId.push(targetCategory.shorthand+1);
   });
-  console.log(JSON.stringify(mdpRequest));
-  console.log("################################# END The things that need to be merged ###########");
+  // console.log(JSON.stringify(mdpRequest));
+  // console.log("################################# END The things that need to be merged ###########");
   return mdpRequest;
 }
 
@@ -78,16 +83,16 @@ function processCategory(singleCat, mapping, mdp = false, ref, prefix="", counte
       let propNames = Object.keys(props);
       propNames.forEach(p => {
         let xacmlAttribute = {AttributeId: p, Value: props[p]};
-        if (mdp){
-          xacmlAttribute.IncludeInResult = true;
-        }
+        // if (mdp){
+        //   xacmlAttribute.IncludeInResult = true;
+        // }
         xacmlCategory.Attribute.push(xacmlAttribute);
       });
     } else {
       let xacmlAttribute = {AttributeId: attribute, Value: singleCat[attribute]};
-      if (mdp){
-        xacmlAttribute.IncludeInResult = true;
-      }
+      // if (mdp){
+      //   xacmlAttribute.IncludeInResult = true;
+      // }
       xacmlCategory.Attribute.push(xacmlAttribute);
     }
   });
